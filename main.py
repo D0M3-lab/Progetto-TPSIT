@@ -3,7 +3,7 @@ from tkinter import simpledialog, messagebox
 import json
 
 class BilancioNegozio:
-    def _init_(self, file_nome="bilancio.json"):
+    def __init__(self, file_nome="bilancio.json"):
         self.file_nome = file_nome
         self.transazioni = self.carica_transazioni()
 
@@ -53,7 +53,7 @@ class BilancioNegozio:
         return entrate - uscite
 
 class App:
-    def _init_(self, root):
+    def __init__(self, root):
         self.root = root
         self.root.title("Gestione Bilancio")
         self.root.geometry("720x720")
@@ -160,7 +160,7 @@ class App:
         except IndexError as e:
             messagebox.showerror("Errore", str(e))
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     root = tk.Tk()
     app = App(root)
-    root.mainloop()
+    root.mainloop()
