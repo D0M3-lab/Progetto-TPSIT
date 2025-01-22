@@ -3,7 +3,7 @@ from tkinter import simpledialog, messagebox
 import json
 
 class BilancioNegozio:
-    def __init__(self, file_nome="bilancio.json"):
+    def _init_(self, file_nome="bilancio.json"):
         self.file_nome = file_nome
         self.transazioni = self.carica_transazioni()
 
@@ -29,6 +29,12 @@ class BilancioNegozio:
         self.transazioni.append(transazione)
         self.salva_transazioni()
 
+    def elimina_transazione(self, indice):
+        if indice < 0 or indice >= len(self.transazioni):
+            raise IndexError("Indice di transazione non valido.")
+        del self.transazioni[indice]
+        self.salva_transazioni()
+
     def modifica_transazione(self, indice, tipo, descrizione, importo):
         if indice < 0 or indice >= len(self.transazioni):
             raise IndexError("Indice di transazione non valido.")
@@ -47,12 +53,12 @@ class BilancioNegozio:
         return entrate - uscite
 
 class App:
-    def __init__(self, root):
+    def _init_(self, root):
         self.root = root
         self.root.title("Gestione Bilancio")
-        self.root.geometry("1920x1080")
+        self.root.geometry("720x720")
         self.root.configure(bg="#1e1e2f")
-       
+
         self.negozio = BilancioNegozio()
 
         # Header
@@ -76,9 +82,8 @@ class App:
         # Footer
         self.footer_frame = tk.Frame(root, bg="#2b2b3c", pady=10)
         self.footer_frame.pack(fill=tk.X)
-       
+
         tk.Button(self.footer_frame, text="Aggiungi Transazione", command=self.aggiungi_transazione, bg="#404056", fg="#ffffff", font=("Arial", 12), pady=5, padx=10).pack(side=tk.LEFT, padx=10)
-        tk.Button(self.footer_frame, text="Visualizza Transazioni", command=self.visualizza_transazioni, bg="#404056", fg="#ffffff", font=("Arial", 12), pady=5, padx=10).pack(side=tk.RIGHT, padx=10)
 
     def aggiorna_bilancio(self):
         self.bilancio_label.config(text=f"Bilancio: {self.negozio.calcola_bilancio()}€")
@@ -100,9 +105,17 @@ class App:
 
             tk.Label(frame, text=t['tipo'].capitalize(), font=("Arial", 14, "bold"), bg="#2b2b3c", fg="#ffffff").grid(row=0, column=1, sticky="w")
             tk.Label(frame, text=t['descrizione'], font=("Arial", 12), bg="#2b2b3c", fg="#b4b4b4").grid(row=1, column=1, sticky="w")
-            tk.Label(frame, text=f"{t['importo']}€", font=("Arial", 14), bg="#2b2b3c", fg="#ffffff").grid(row=0, column=2, rowspan=2, sticky="e", padx=10, anchor="e")
+            tk.Label(frame, text=f"{t['importo']}€", font=("Arial", 14), bg="#2b2b3c", fg="#ffffff").grid(row=0, column=2, rowspan=2, sticky="e", padx=10)
 
-            tk.Button(frame, text="Modifica", command=lambda i=i: self.modifica_transazione(i), bg="#404056", fg="#ffffff", font=("Arial", 10), pady=5, padx=10).pack(side=tk.RIGHT, padx=20)
+            # Box for buttons placed beside the transaction
+            button_frame = tk.Frame(frame, bg="#2b2b3c")
+            button_frame.grid(row=0, column=3, rowspan=2, padx=10, sticky="e")
+
+            # Modify button
+            tk.Button(button_frame, text="Modifica", command=lambda i=i: self.modifica_transazione(i), bg="#404056", fg="#ffffff", font=("Arial", 9), pady=3, padx=8).pack(side=tk.TOP, pady=3)
+
+            # Eliminate button (in red)
+            tk.Button(button_frame, text="Elimina", command=lambda i=i: self.elimina_transazione(i), bg="#e74c3c", fg="#ffffff", font=("Arial", 9), pady=3, padx=8).pack(side=tk.TOP, pady=3)
 
     def aggiungi_transazione(self):
         tipo = simpledialog.askstring("Aggiungi Transazione", "Tipo di transazione (entrata/uscita):")
@@ -119,6 +132,7 @@ class App:
                 messagebox.showerror("Errore", str(e))
         else:
             messagebox.showerror("Errore", "Dati non validi o incompleti.")
+
 
     def modifica_transazione(self, indice):
         transazione = self.negozio.transazioni[indice]
@@ -137,18 +151,16 @@ class App:
         else:
             messagebox.showerror("Errore", "Dati non validi o incompleti.")
 
-    def visualizza_transazioni(self):
-        transazioni = self.negozio.transazioni
-        if not transazioni:
-            messagebox.showinfo("Transazioni", "Non ci sono transazioni registrate.")
-            return
+    def elimina_transazione(self, indice):
+        try:
+            self.negozio.elimina_transazione(indice)
+            messagebox.showinfo("Successo", "Transazione eliminata con successo!")
+            self.aggiorna_bilancio()
+            self.aggiorna_lista_transazioni()
+        except IndexError as e:
+            messagebox.showerror("Errore", str(e))
 
-        transazioni_str = "\n".join(
-            [f"{i + 1}. {t['tipo'].capitalize()}: {t['descrizione']} - {t['importo']}€" for i, t in enumerate(transazioni)]
-        )
-        messagebox.showinfo("Transazioni", transazioni_str)
-
-if __name__ == "__main__":
+if _name_ == "_main_":
     root = tk.Tk()
     app = App(root)
-    root.mainloop()
+    root.mainloop()
