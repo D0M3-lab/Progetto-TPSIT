@@ -86,7 +86,14 @@ class App:
         tk.Button(self.footer_frame, text="Aggiungi Transazione", command=self.aggiungi_transazione, bg="#404056", fg="#ffffff", font=("Arial", 12), pady=5, padx=10).pack(side=tk.LEFT, padx=10)
 
     def aggiorna_bilancio(self):
-        self.bilancio_label.config(text=f"Bilancio: {self.negozio.calcola_bilancio()}€")
+        bilancio = self.negozio.calcola_bilancio()
+        bilancio_text = f"Bilancio: {bilancio}€"
+
+        # Se il bilancio è negativo, il colore del testo diventa rosso, altrimenti bianco
+        bilancio_fg = "E4080A" if bilancio < 0 else "ffffff"
+
+        # Aggiorna la label del bilancio
+        self.bilancio_label.config(text=bilancio_text, fg=bilancio_fg)
 
     def aggiorna_lista_transazioni(self):
         for widget in self.transazioni_frame.winfo_children():
