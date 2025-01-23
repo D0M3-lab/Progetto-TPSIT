@@ -90,7 +90,7 @@ class App:
         bilancio_text = f"Bilancio: {bilancio}€"
 
         # Se il bilancio è negativo, il colore del testo diventa rosso, altrimenti bianco
-        bilancio_fg = "E4080A" if bilancio < 0 else "ffffff"
+        bilancio_fg = "#E4080A" if bilancio < 0 else "#ffffff"
 
         # Aggiorna la label del bilancio
         self.bilancio_label.config(text=bilancio_text, fg=bilancio_fg)
